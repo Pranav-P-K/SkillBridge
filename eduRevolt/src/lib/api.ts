@@ -1,7 +1,12 @@
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { auth } from './firebase';
+import Constants from 'expo-constants';
 
-export const API_URL = 'https://skillbridge-backend-2-gq5c.onrender.com';
+const extra = Constants.expoConfig?.extra || Constants.manifest?.extra || {};
+export const API_URL =
+  extra.API_URL ||
+  process.env.EXPO_PUBLIC_API_URL ||
+  'http://localhost:3000';
 
 export async function fetchWithAuth(endpoint: string, method = 'GET', body?: object) {
   const user = auth.currentUser;

@@ -1,11 +1,9 @@
 import Constants from 'expo-constants';
 import { initializeApp } from 'firebase/app';
-import { GoogleAuthProvider, initializeAuth } from 'firebase/auth';
-
+import { GoogleAuthProvider, initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import {
   initializeFirestore,
-  persistentLocalCache,
-  persistentMultipleTabManager,
 } from 'firebase/firestore';
 
 const extra = Constants.expoConfig?.extra || Constants.manifest?.extra || {};
@@ -23,12 +21,11 @@ const app = initializeApp(firebaseConfig);
 
 // ✅ Auth with persistence (React Native)
 export const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(ReactNativeAsyncStorage),
 });
 export const googleProvider = new GoogleAuthProvider();
 
-// ✅ Firestore with persistence
+// ✅ Firestore (use memory cache to avoid IndexedDB warnings on web/preview)
 export const db = initializeFirestore(app, {
-  localCache: persistentLocalCache({
-    tabManager: persistentMultipleTabManager(),
-  }),
+  experimentalForceLongPolling: true,
 });
